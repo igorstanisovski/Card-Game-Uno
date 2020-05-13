@@ -4,10 +4,51 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+//connection to database
+var mongoose = require('mongoose');
+//var mongoDB = 'mongodb://localhost/cardGameDatabase';
+var mongoDB = 'mongodb+srv://igorcheta:12345@cluster-game-xk9iu.mongodb.net/cardGame';
+mongoose.connect(mongoDB,{useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.Promise = global.Promise;
+var db = mongoose.connection;
+//check for error
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+//check connection
+db.on('connected', () => {
+  console.log("Succesfully connected!!!");
+});
+
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+//routers
+var usersRouter = require('./routes/userRoutes');
 
 var app = express();
+
+var cors = require('cors');
+var allowedOrigins = ['http://localhost:4200', 'http://localhost:3000', 'http://yourapp.com', 'http://192.168.0.7:4200'];
+
+ app.use(cors({
+  credentials: true,
+  origin: function(origin, callback){
+    // allow requests with no origin 
+    // (like mobile apps or curl requests)
+    if(!origin) return callback(null, true);
+    if(allowedOrigins.indexOf(origin) === -1){
+      var msg = 'The CORS policy for this site does not ' +
+                'allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  }
+}
+));
+
+var session = require('express-session');
+app.use(session({
+  secret: 'work hard',
+  resave: true,
+  saveUninitialized: false
+}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
