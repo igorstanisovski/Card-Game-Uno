@@ -8,6 +8,14 @@ If you want to run this locally you need to have this installed:
 - Angular
 
 ## Install locally
+ - Clone the project
  - Navigate to MongoDB installation folder and start mongod.exe
+ - Open project terminal and write the following:
 
-## Setup 
+ ```
+    cd server
+    npm install
+    cd ..
+    cd client
+    npm install
+ ```
