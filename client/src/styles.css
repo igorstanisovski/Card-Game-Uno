@@ -1,1 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+.bg-img {
+    background-image: url('/assets/uno_background.jpg');
+    background-position: center;
+    background-repeat: no-repeat; 
+    background-attachment: fixed;
+    background-size: cover;
+}
