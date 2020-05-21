@@ -28,8 +28,6 @@ io.on('connection', function(socket){
                 break;
             }
         }
-        //console.log(clients);
-        //delete clients[socket.id];
     });
     //User has requested game start
     socket.on('startGame', (data) => {
@@ -73,10 +71,10 @@ io.on('connection', function(socket){
         if(playerOnTurn == io.engine.clientsCount){
             playerOnTurn = 0;
         }
-        io.to(clients[playerOnTurn].socket).emit('turn',`It's your turn!`)
+        // console.log(playerOnTurn);
+        // console.log(clients[playerOnTurn].socket);
+        io.to(clients[playerOnTurn].socket).emit('turn',`It's your turn!`);
     })
-
-
 });
 
 module.exports = socketApi;

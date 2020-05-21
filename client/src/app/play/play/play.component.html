@@ -1,1 +1,13 @@
-<p>play works!</p>
+<div class="p-5 container">
+    <div class="form-row text-center">
+        <button class="btn btn-success btn-sm" (click)="connect()" *ngIf="!userConnected()">Connect</button>
+        <button class="btn btn-danger btn-sm" (click)="disconnect()" *ngIf="userConnected()">Disconnect</button>
+        <button class="btn btn-success btn-sm" (click)="startGame()" *ngIf="userConnected() && getUsername()">Start Game</button>
+    </div>
+    <div class="form-row" id="field">
+        <div class="col" #gameCanvas></div>
+        <div class="col" #deck></div>
+    </div>
+    <div class="cards row" id="cards" name="cards" #cards>      
+    </div>
+</div>
