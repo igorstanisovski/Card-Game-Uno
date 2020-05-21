@@ -9,6 +9,7 @@ var deck = cards.getDeck();
 socketApi.io = io;
 var clients = [];
 var playerOnTurn = 0;
+var direction = 1; //1 for forward, -1 for backwards
 
 io.on('connection', function(socket){
     var user = { userID: socket.request._query['userID'] , socket: socket.id}
@@ -48,6 +49,7 @@ io.on('connection', function(socket){
                 }
                 io.to(clients[i].socket).emit('cards',dataToBeSent);
             }
+            io.emit('colorOnBoard',deck[0].color);
             io.emit('cardOnBoard',deck[0]);
             deck.splice(0,1);
             io.to(clients[playerOnTurn].socket).emit('turn',`It's your turn!`)
@@ -61,19 +63,49 @@ io.on('connection', function(socket){
         io.emit('cardOnBoard',data);
     })
 
+    socket.on('colorOnBoard',(data) => {
+        io.emit('colorOnBoard',data);
+    })
+
     socket.on('deck', (data) => {
         socket.emit('card',deck[0]);
         deck.splice(0,1);
     })
 
-    socket.on('turnOver', (data) => {
-        playerOnTurn++;
-        if(playerOnTurn == io.engine.clientsCount){
-            playerOnTurn = 0;
+    socket.on('direction',(data) => {
+        direction = data;
+    })
+
+    socket.on('plusCards', (data) => {
+        if(data === "+2"){
+            socket.emit('plusCards',deck[0]);
+            socket.emit('plusCards',deck[1]);
+            deck.splice(0,2);
         }
-        // console.log(playerOnTurn);
-        // console.log(clients[playerOnTurn].socket);
-        io.to(clients[playerOnTurn].socket).emit('turn',`It's your turn!`);
+        else if(data === "+4"){
+            socket.emit('plusCards',deck[0]);
+            socket.emit('plusCards',deck[1]);
+            socket.emit('plusCards',deck[2]);
+            socket.emit('plusCards',deck[3]);
+            deck.splice(0,4);
+        }
+    })
+
+    socket.on('turnOver', (data) => {
+        if(direction == 1){
+            playerOnTurn++;
+            if(playerOnTurn == io.engine.clientsCount){
+                playerOnTurn = 0;
+            }
+            io.to(clients[playerOnTurn].socket).emit('turn',`It's your turn!`);
+        }
+        else if(direction == -1){
+            playerOnTurn--;
+            if(playerOnTurn == -1){
+                playerOnTurn = io.engine.clientsCount - 1;
+            }
+            io.to(clients[playerOnTurn].socket).emit('turn',`It's your turn!`);
+        }
     })
 });
 

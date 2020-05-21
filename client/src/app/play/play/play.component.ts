@@ -4,6 +4,8 @@ import { Router,ActivatedRoute } from '@angular/router';
 import { UserService } from '../../user.service';
 import { Observable} from 'rxjs';
 import { SocketService } from 'src/app/socket.service';
+import { MatDialog } from '@angular/material/dialog';
+import { PickColorCardComponent } from '../../popups/pick-color-card/pick-color-card.component';
 
 @Component({
   selector: 'app-play',
@@ -20,13 +22,14 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
   user:User;
   cards: any = [];
   cardOnBoard:any;
+  colorOnBoard:string;
   gameStarted:boolean;
   deleteAllCards:boolean = false;
   turn:boolean = false;
-  dialogConfig:any;
+
 
   constructor(private userService:UserService,private route: ActivatedRoute,private router: Router, 
-    private socketService: SocketService, private elementRef:ElementRef, private renderer: Renderer2) { 
+    private socketService: SocketService, private elementRef:ElementRef, private renderer: Renderer2,public dialog: MatDialog) { 
   }
 
   getUsername() {
@@ -95,7 +98,21 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
       this.socketService.listen('turn').subscribe((data) => {
         this.deleteAllCards=true;
         this.turn = true;
+        this.ngAfterViewInit();
         window.alert(data);
+        if(this.cardOnBoard.value === "+2" || this.cardOnBoard.value === "+4"){
+          this.socketService.emit("plusCards",this.cardOnBoard.value);
+          window.alert(this.cardOnBoard.value + " cards");
+        }
+      })
+
+      this.socketService.listen('colorOnBoard').subscribe((data:string) => {
+        this.colorOnBoard = data;
+      })
+
+      this.socketService.listen('plusCards').subscribe((data:any) => {
+        this.cards.push(data);
+        this.deleteAllCards = true;
         this.ngAfterViewInit();
       })
 
@@ -112,10 +129,6 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
     //delete all user cards so that we can refresh the view
     if(this.deleteAllCards){
       this.deleteAllCards = false;
-    //   const childElements = this.el.nativeElement.childNodes;
-    // for (let child of childElements) {
-    //   this.renderer.removeChild(this.el.nativeElement, child);
-    // }
       const myEl = this.d1.nativeElement.childNodes;
       for(let child of myEl){
         this.renderer.removeChild(this.d1.nativeElement,child);
@@ -142,27 +155,51 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
         this.renderer.addClass(div,'col-md-1');
         this.renderer.appendChild(div,img);
         this.renderer.listen(div, 'click' , () => {
-          if(this.cardOnBoard.color === cardcolor || cardcolor === 'All' || this.cardOnBoard.value === cardvalue){
+          if(this.colorOnBoard === cardcolor || cardcolor === 'All' || this.cardOnBoard.value === cardvalue){
             window.alert("You play: " + cardcolor + " " + cardvalue);
+            this.colorOnBoard = cardcolor;
             this.cardOnBoard = {value: cardvalue, color:cardcolor };
-            this.socketService.emit('cardOnBoard',this.cardOnBoard);
-            this.renderer.removeChild(this.d1.nativeElement,div);
-            for(var j = 0;j<this.cards.length;j++){
-              if(this.cards[j].color === cardcolor && this.cards[j].value === cardvalue){
-                this.cards.splice(j,1);
+            if(cardcolor === "All"){
+                const dialogRef=this.dialog.open(PickColorCardComponent);  //Open MatDialog and load component dynamically     
+                dialogRef.afterClosed().subscribe(confirmresult=>{
+                  this.colorOnBoard = confirmresult;  
+                  this.socketService.emit('colorOnBoard',this.colorOnBoard);
+                  this.socketService.emit('cardOnBoard',this.cardOnBoard);
+                  this.renderer.removeChild(this.d1.nativeElement,div);
+                  for(var j = 0;j<this.cards.length;j++){
+                    if(this.cards[j].color === cardcolor && this.cards[j].value === cardvalue){
+                      this.cards.splice(j,1);
+                    }
+                  }
+                  const childElements = this.gameCanvas.nativeElement.childNodes;
+                  for (let child of childElements) {
+                    this.renderer.removeChild(this.gameCanvas.nativeElement, child);
+                  }
+                  this.turn = false;
+                  this.socketService.emit('turnOver','');
+                }) 
+            }
+            else {
+              this.socketService.emit('cardOnBoard',this.cardOnBoard);
+              this.renderer.removeChild(this.d1.nativeElement,div);
+              for(var j = 0;j<this.cards.length;j++){
+                if(this.cards[j].color === cardcolor && this.cards[j].value === cardvalue){
+                  this.cards.splice(j,1);
+                }
               }
+              const childElements = this.gameCanvas.nativeElement.childNodes;
+              for (let child of childElements) {
+                this.renderer.removeChild(this.gameCanvas.nativeElement, child);
+              }
+              this.turn = false;
+              this.socketService.emit('turnOver','');
             }
-            const childElements = this.gameCanvas.nativeElement.childNodes;
-            for (let child of childElements) {
-              this.renderer.removeChild(this.gameCanvas.nativeElement, child);
-            }
-            this.turn = false;
-            this.socketService.emit('turnOver','');
           }
           else {
-            window.alert("You can't play this card! Choose color " + this.cardOnBoard.color + "or value: " + this.cardOnBoard.value)
+            console.log(this.colorOnBoard);
+            window.alert("You can't play this card! Choose color " + this.colorOnBoard + "or value: " + this.cardOnBoard.value)
           }
-        })
+        })  
         this.renderer.appendChild(this.d1.nativeElement, div);
       }
       //show deck with click for pulling cards
