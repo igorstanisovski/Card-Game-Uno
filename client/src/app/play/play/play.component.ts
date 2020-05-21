@@ -26,6 +26,7 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
   gameStarted:boolean;
   deleteAllCards:boolean = false;
   turn:boolean = false;
+  direction:number = 1;
 
 
   constructor(private userService:UserService,private route: ActivatedRoute,private router: Router, 
@@ -83,6 +84,7 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
 
       this.socketService.listen('cardOnBoard').subscribe((data:any) => {
         this.cardOnBoard = data;
+        console.log(this.cardOnBoard);
         this.deleteAllCards = true;
         if(!this.turn){
           this.ngAfterViewInit();
@@ -116,6 +118,14 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
         this.ngAfterViewInit();
       })
 
+      this.socketService.listen('direction').subscribe((data:number) => {
+        this.direction = data;
+      })
+
+      this.socketService.listen('win').subscribe((data:string) => {
+        window.alert(data + " WON");
+      })
+
     }
   }
 
@@ -142,6 +152,10 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
         this.renderer.removeChild(this.gameCanvas.nativeElement,child);
       }
     }
+    if(this.cards.length == 0 && this.gameStarted){
+      this.socketService.emit('win',this.user.username);
+      window.alert("YOU WON!!!!");
+    }
     if(this.userIsConnected && this.turn){
       //show cards for user with available clicks
       for(var i = 0;i < this.cards.length;i++){
@@ -158,7 +172,7 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
           if(this.colorOnBoard === cardcolor || cardcolor === 'All' || this.cardOnBoard.value === cardvalue){
             window.alert("You play: " + cardcolor + " " + cardvalue);
             this.colorOnBoard = cardcolor;
-            this.cardOnBoard = {value: cardvalue, color:cardcolor };
+            this.cardOnBoard = {value: cardvalue, color:this.colorOnBoard };
             if(cardcolor === "All"){
                 const dialogRef=this.dialog.open(PickColorCardComponent);  //Open MatDialog and load component dynamically     
                 dialogRef.afterClosed().subscribe(confirmresult=>{
@@ -180,6 +194,15 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
                 }) 
             }
             else {
+              if(this.cardOnBoard.value === "Reverse"){
+                this.direction = -this.direction;
+                this.socketService.emit('direction',this.direction);
+              }
+              else if(this.cardOnBoard.value === "Skip"){
+                this.socketService.emit('skipNextPlayer','');
+              }
+              //////////////////
+              this.socketService.emit('colorOnBoard',this.colorOnBoard);
               this.socketService.emit('cardOnBoard',this.cardOnBoard);
               this.renderer.removeChild(this.d1.nativeElement,div);
               for(var j = 0;j<this.cards.length;j++){
