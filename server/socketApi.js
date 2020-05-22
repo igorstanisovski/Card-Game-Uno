@@ -10,6 +10,9 @@ socketApi.io = io;
 var clients = [];
 var playerOnTurn = 0;
 var direction = 1; //1 for forward, -1 for backwards
+var cardOnBoard = {};
+var plusCardsGiven = true;
+var usedDeck = [];
 
 io.on('connection', function(socket){
     var user = { userID: socket.request._query['userID'] , socket: socket.id}
@@ -39,7 +42,8 @@ io.on('connection', function(socket){
             io.emit('gameStarted','GAME STARTED!!!');
             for(var i = 0; i < io.engine.clientsCount;i++){
                 var playerCards = [];
-                for(var j = 0;j < 3;j++){
+                for(var j = 0;j < 8;j++){
+                    // da se vrati vo deck[j]
                     playerCards[j] = deck[j];
                 }
                 deck.splice(0,8);
@@ -49,6 +53,8 @@ io.on('connection', function(socket){
                 }
                 io.to(clients[i].socket).emit('cards',dataToBeSent);
             }
+            //custom delete after
+            //deck[0] = {value:"+4", color:"All"};
             if(deck[0].color === "All"){
                 io.emit('colorOnBoard',"Red");
             }
@@ -63,9 +69,24 @@ io.on('connection', function(socket){
                 playerOnTurn++;
                 io.to(clients[playerOnTurn].socket).emit('turn',`It's your turn!`)
             }
+            else if(deck[0].value == "+4"){
+                io.to(clients[playerOnTurn].socket).emit('plusCards',deck[1]);
+                io.to(clients[playerOnTurn].socket).emit('plusCards',deck[2]);
+                io.to(clients[playerOnTurn].socket).emit('plusCards',deck[3]);
+                io.to(clients[playerOnTurn].socket).emit('plusCards',deck[4]);
+                deck.splice(1,4);
+                io.to(clients[playerOnTurn].socket).emit('turn',`It's your turn!`)
+            }
+            else if(deck[0].value == "+2"){
+                io.to(clients[playerOnTurn].socket).emit('plusCards',deck[1]);
+                io.to(clients[playerOnTurn].socket).emit('plusCards',deck[2]);
+                deck.splice(1,2);
+                io.to(clients[playerOnTurn].socket).emit('turn',`It's your turn!`)
+            }
             else {
                 io.to(clients[playerOnTurn].socket).emit('turn',`It's your turn!`)
             }
+            usedDeck.push(deck[0]);
             deck.splice(0,1);
         }
         else {
@@ -74,7 +95,15 @@ io.on('connection', function(socket){
     })
 
     socket.on('cardOnBoard', (data) => {
-        console.log(data);
+        cardOnBoard = data;
+        if(cardOnBoard.value === "+4" || cardOnBoard.value ===  "+2"){
+            plusCardsGiven = false;
+        }
+        usedDeck.push(cardOnBoard);
+        if(deck.length === 0) {
+            deck = cards.shuffleDeck(usedDeck);;
+            usedDeck.clear();
+        }
         io.emit('cardOnBoard',data);
     })
 
@@ -124,6 +153,14 @@ io.on('connection', function(socket){
                 playerOnTurn++;
             }
         }
+        else {
+            if(direction == 1){
+                playerOnTurn--;
+            }
+            else {
+                playerOnTurn++;
+            }
+        }
     })
 
     socket.on('turnOver', (data) => {
@@ -132,16 +169,45 @@ io.on('connection', function(socket){
             if(playerOnTurn == io.engine.clientsCount){
                 playerOnTurn = 0;
             }
-            console.log("p: " + playerOnTurn);
             io.to(clients[playerOnTurn].socket).emit('turn',`It's your turn!`);
+            if(!plusCardsGiven){
+                plusCardsGiven = true;
+                if(cardOnBoard.value === "+2"){
+                    io.to(clients[playerOnTurn].socket).emit('plusCards',deck[0]);
+                    io.to(clients[playerOnTurn].socket).emit('plusCards',deck[1]);
+                    deck.splice(0,2);
+                }
+                else if(cardOnBoard.value === "+4"){
+                    io.to(clients[playerOnTurn].socket).emit('plusCards',deck[0]);
+                    io.to(clients[playerOnTurn].socket).emit('plusCards',deck[1]);
+                    io.to(clients[playerOnTurn].socket).emit('plusCards',deck[2]);
+                    io.to(clients[playerOnTurn].socket).emit('plusCards',deck[3]);
+                    deck.splice(0,4);
+                }
+            }
+            
         }
         else if(direction == -1){
             playerOnTurn--;
             if(playerOnTurn == -1){
                 playerOnTurn = io.engine.clientsCount - 1;
             }
-            console.log("p: " + playerOnTurn);
             io.to(clients[playerOnTurn].socket).emit('turn',`It's your turn!`);
+            if(!plusCardsGiven){
+                plusCardsGiven = true;
+                if(cardOnBoard.value === "+2"){
+                    io.to(clients[playerOnTurn].socket).emit('plusCards',deck[0]);
+                    io.to(clients[playerOnTurn].socket).emit('plusCards',deck[1]);
+                    deck.splice(0,2);
+                }
+                else if(cardOnBoard.value === "+4"){
+                    io.to(clients[playerOnTurn].socket).emit('plusCards',deck[0]);
+                    io.to(clients[playerOnTurn].socket).emit('plusCards',deck[1]);
+                    io.to(clients[playerOnTurn].socket).emit('plusCards',deck[2]);
+                    io.to(clients[playerOnTurn].socket).emit('plusCards',deck[3]);
+                    deck.splice(0,4);
+                }
+            }
         }
     })
     socket.on('win', (data) => {

@@ -6,6 +6,7 @@ import { Observable} from 'rxjs';
 import { SocketService } from 'src/app/socket.service';
 import { MatDialog } from '@angular/material/dialog';
 import { PickColorCardComponent } from '../../popups/pick-color-card/pick-color-card.component';
+import { YourTurnPopupComponent } from 'src/app/popups/your-turn-popup/your-turn-popup.component';
 
 @Component({
   selector: 'app-play',
@@ -17,6 +18,7 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('cards') private d1: ElementRef;
   @ViewChild('gameCanvas') private gameCanvas: ElementRef;
   @ViewChild('deck') private deck: ElementRef;
+  @ViewChild('gameBoardColor') private gameBoardColor: ElementRef;
 
   userIsConnected: boolean = false;
   user:User;
@@ -61,6 +63,18 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
     this.socketService.disconnectFromServer();
     this.cards = [];
     this.gameStarted = false;
+    const myEl = this.d1.nativeElement.childNodes;
+    for(let child of myEl){
+      this.renderer.removeChild(this.d1.nativeElement,child);
+    }
+    const myEle = this.deck.nativeElement.childNodes;
+    for(let child of myEle){
+      this.renderer.removeChild(this.deck.nativeElement,child);
+    }
+    const myElem = this.gameCanvas.nativeElement.childNodes;
+    for(let child of myElem){
+      this.renderer.removeChild(this.gameCanvas.nativeElement,child);
+    }
   }
 
   userConnected() {
@@ -100,16 +114,38 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
       this.socketService.listen('turn').subscribe((data) => {
         this.deleteAllCards=true;
         this.turn = true;
+        //window.alert(data);
+        const dialogRef=this.dialog.open(YourTurnPopupComponent);
+        setTimeout( () => {
+          dialogRef.close();
+        },1000);
         this.ngAfterViewInit();
-        window.alert(data);
-        if(this.cardOnBoard.value === "+2" || this.cardOnBoard.value === "+4"){
-          this.socketService.emit("plusCards",this.cardOnBoard.value);
-          window.alert(this.cardOnBoard.value + " cards");
-        }
       })
 
       this.socketService.listen('colorOnBoard').subscribe((data:string) => {
         this.colorOnBoard = data;
+        const myEl = this.gameBoardColor.nativeElement;
+        this.renderer.removeClass(myEl,"bg-danger");
+        this.renderer.removeClass(myEl,"bg-primary");
+        this.renderer.removeClass(myEl,"bg-success");
+        this.renderer.removeClass(myEl,"bg-warning");
+        if(this.colorOnBoard === "Red"){
+          console.log(this.colorOnBoard);
+          this.renderer.addClass(myEl,"bg-danger");
+        }
+        else if(this.colorOnBoard === "Blue"){
+          console.log(this.colorOnBoard);
+          this.renderer.addClass(myEl,"bg-primary");
+        }
+        else if(this.colorOnBoard === "Green"){
+          console.log(this.colorOnBoard);
+          this.renderer.addClass(myEl,"bg-success");
+        }
+        else if(this.colorOnBoard === "Yellow"){
+          console.log(this.colorOnBoard);
+          this.renderer.addClass(myEl,"bg-warning");
+        } 
+        //this.ngAfterViewInit();
       })
 
       this.socketService.listen('plusCards').subscribe((data:any) => {
@@ -166,15 +202,17 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
         img.src = `../../../assets/cards/${cardcolor}/${cardcolor}_${cardvalue}.png`;
         img.height = 120;
         img.width = 80;
-        this.renderer.addClass(div,'col-md-1');
+        this.renderer.addClass(div,'col');
+        this.renderer.addClass(div,'col-centered');
         this.renderer.appendChild(div,img);
         this.renderer.listen(div, 'click' , () => {
           if(this.colorOnBoard === cardcolor || cardcolor === 'All' || this.cardOnBoard.value === cardvalue){
-            window.alert("You play: " + cardcolor + " " + cardvalue);
+            //window.alert("You play: " + cardcolor + " " + cardvalue);
             this.colorOnBoard = cardcolor;
+            this.socketService.emit('colorOnBoard',this.colorOnBoard);
             this.cardOnBoard = {value: cardvalue, color:this.colorOnBoard };
             if(cardcolor === "All"){
-                const dialogRef=this.dialog.open(PickColorCardComponent);  //Open MatDialog and load component dynamically     
+                const dialogRef=this.dialog.open(PickColorCardComponent);  
                 dialogRef.afterClosed().subscribe(confirmresult=>{
                   this.colorOnBoard = confirmresult;  
                   this.socketService.emit('colorOnBoard',this.colorOnBoard);
