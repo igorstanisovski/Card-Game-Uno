@@ -29,12 +29,19 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
   deleteAllCards:boolean = false;
   turn:boolean = false;
   direction:number = 1;
+  public playerOnTurn:string;
 
 
   constructor(private userService:UserService,private route: ActivatedRoute,private router: Router, 
     private socketService: SocketService, private elementRef:ElementRef, private renderer: Renderer2,public dialog: MatDialog) { 
   }
 
+  checkIfGameStarted() {
+    return this.gameStarted;
+  }
+  getPlayerOnTurn() {
+    return this.playerOnTurn;
+  }
   getUsername() {
     if(this.user.username === 'igorcheta'){
       return true;
@@ -162,6 +169,10 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
         window.alert(data + " WON");
       })
 
+      this.socketService.listen('showTurn').subscribe((data:string) => {
+        this.playerOnTurn = data;
+      })
+
     }
   }
 
@@ -221,6 +232,7 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
                   for(var j = 0;j<this.cards.length;j++){
                     if(this.cards[j].color === cardcolor && this.cards[j].value === cardvalue){
                       this.cards.splice(j,1);
+                      break;
                     }
                   }
                   const childElements = this.gameCanvas.nativeElement.childNodes;
@@ -315,7 +327,8 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
         img.src = `../../../assets/cards/${cardcolor}/${cardcolor}_${cardvalue}.png`;
         img.height = 120;
         img.width = 80;
-        this.renderer.addClass(div,'col-md-1');
+        this.renderer.addClass(div,'col');
+        this.renderer.addClass(div,'col-centered');
         this.renderer.appendChild(div,img);
         this.renderer.appendChild(this.d1.nativeElement, div);
       }

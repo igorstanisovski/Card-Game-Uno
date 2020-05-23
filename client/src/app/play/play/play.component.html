@@ -1,13 +1,28 @@
-<div class="text-center container">
-    <div class="mx-auto p-5">
-        <button class="btn btn-success btn-sm" (click)="connect()" *ngIf="!userConnected()">Connect</button>
-        <button class="btn btn-danger btn-sm" (click)="disconnect()" *ngIf="userConnected()">Disconnect</button>
-        <button class="btn btn-success btn-sm" (click)="startGame()" *ngIf="userConnected() && getUsername()">Start Game</button>
+<div class="row">
+    <div class="col-md-2">
+
     </div>
-    <div class="row mx-auto w-25" id="field" #gameBoardColor>
-        <div class="col" #gameCanvas></div>
-        <div class="col" #deck></div>
+    <div class="col-md-8">
+        <div class="text-center container">
+            <div class="mx-auto p-5">
+                <button class="btn btn-success btn-sm" (click)="connect()" *ngIf="!userConnected()">Connect</button>
+                <button class="btn btn-danger btn-sm" (click)="disconnect()" *ngIf="userConnected()">Disconnect</button>
+                <button class="btn btn-success btn-sm" (click)="startGame()" *ngIf="userConnected() && getUsername()">Start Game</button>
+            </div>
+            <div class="row mx-auto w-25" id="field" #gameBoardColor>
+                <div class="col" #gameCanvas></div>
+                <div class="col" #deck></div>
+            </div>
+            <div class="row mx-auto w-75 p-5" id="cards" name="cards" #cards>      
+            </div>
+        </div>
     </div>
-    <div class="row mx-auto w-75 p-5" id="cards" name="cards" #cards>      
+    <div class="col-md-2" *ngIf="checkIfGameStarted()">
+        <label for="playerOnTurn">Player on turn: {{ getPlayerOnTurn() }}</label>
     </div>
 </div>
+
+
+<!-- <div class="col-sm" *ngIf="checkIfGameStarted()">
+    <label for="playerOnTurn">Player on turn: {{ getPlayerOnTurn() }}</label>
+</div> -->

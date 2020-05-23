@@ -13,7 +13,7 @@ export class SocketService {
   }
 
   connectToServer(user:User) {
-    this.socket = io.connect('http://192.168.0.7:3000',{ query: `userID=${user._id}`});
+    this.socket = io.connect('http://192.168.0.7:3000',{ query: `userID=${user._id}+&username=${user.username}`} );
     this.emit("hello","hello server");
     this.listen("hello").subscribe((data) => {
       console.log(data);
