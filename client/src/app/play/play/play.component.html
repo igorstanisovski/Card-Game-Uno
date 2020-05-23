@@ -10,9 +10,9 @@
                 <button class="btn btn-success btn-sm" (click)="startGame()" *ngIf="userConnected() && getUsername() && !checkIfGameStarted()">Start Game</button>
             </div>
             <!-- #gameBoardColor -->
-            <div class="row mx-auto text-center" id="field" *ngIf="checkIfGameStarted()" #gameBoardColor>    
+            <div class="row mx-auto text-center" id="field" *ngIf="checkIfGameStarted()" >    
                 <img src="../../../assets/uno_table.png" width="400px" height="400px" >
-                <div id="hexagon"></div>
+                <div id="chevron" #gameBoardColor></div>
                 <div id="gameCanvas" class="col" #gameCanvas></div>
                 <div id="deck" class="col" #deck></div>
                 <div id="playerOnTurn" *ngIf="checkIfGameStarted()">

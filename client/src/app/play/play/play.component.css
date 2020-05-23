@@ -32,4 +32,56 @@
     /* left: 100px;   */
  }
 
- 
+ #chevron {
+   position: absolute;
+   text-align: center;
+   left:100px;
+   top: 40px;
+   margin-bottom: 6px;
+   height: 60px;
+   width: 200px;
+ }
+ #chevron:before {
+   content: '';
+   position: absolute;
+   top: 0;
+   left: 0;
+   height: 100%;
+   width: 51%;
+   transform: skew(0deg, 6deg);
+ }
+ #chevron:after {
+   content: '';
+   position: absolute;
+   top: 0;
+   right: 0;
+   height: 100%;
+   width: 50%;
+   transform: skew(0deg, -6deg);
+ }
+
+ #chevron.red::before {
+   background: red;
+}
+#chevron.blue::before {
+   background: blue;
+}
+#chevron.green::before {
+   background: green;
+}
+#chevron.yellow::before {
+   background: yellow;
+}
+#chevron.red::after {
+   background: red;
+}
+#chevron.blue::after {
+   background: blue;
+}
+#chevron.green::after {
+   background: green;
+}
+#chevron.yellow::after {
+   background: yellow;
+}
+

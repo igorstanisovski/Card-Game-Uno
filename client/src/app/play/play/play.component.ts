@@ -153,25 +153,33 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
       this.socketService.listen('colorOnBoard').subscribe((data:string) => {
         this.colorOnBoard = data;
         const myEl = this.gameBoardColor.nativeElement;
-        this.renderer.removeClass(myEl,"bg-danger");
-        this.renderer.removeClass(myEl,"bg-primary");
-        this.renderer.removeClass(myEl,"bg-success");
-        this.renderer.removeClass(myEl,"bg-warning");
+        // this.renderer.removeClass(myEl,"bg-danger");
+        // this.renderer.removeClass(myEl,"bg-primary");
+        // this.renderer.removeClass(myEl,"bg-success");
+        // this.renderer.removeClass(myEl,"bg-warning");
+        this.renderer.removeClass(myEl,"red");
+        this.renderer.removeClass(myEl,"green");
+        this.renderer.removeClass(myEl,"blue");
+        this.renderer.removeClass(myEl,"yellow");
         if(this.colorOnBoard === "Red"){
           console.log(this.colorOnBoard);
-          this.renderer.addClass(myEl,"bg-danger");
+          // this.renderer.addClass(myEl,"bg-danger");
+          this.renderer.addClass(myEl,"red");
         }
         else if(this.colorOnBoard === "Blue"){
           console.log(this.colorOnBoard);
-          this.renderer.addClass(myEl,"bg-primary");
+          // this.renderer.addClass(myEl,"bg-primary");
+          this.renderer.addClass(myEl,"blue");
         }
         else if(this.colorOnBoard === "Green"){
           console.log(this.colorOnBoard);
-          this.renderer.addClass(myEl,"bg-success");
+          // this.renderer.addClass(myEl,"bg-success");
+          this.renderer.addClass(myEl,"green");
         }
         else if(this.colorOnBoard === "Yellow"){
           console.log(this.colorOnBoard);
-          this.renderer.addClass(myEl,"bg-warning");
+          // this.renderer.addClass(myEl,"bg-warning");
+          this.renderer.addClass(myEl,"yellow");
         } 
         //this.ngAfterViewInit();
       })
