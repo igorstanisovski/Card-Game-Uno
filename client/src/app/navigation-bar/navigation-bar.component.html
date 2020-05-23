@@ -14,7 +14,7 @@
                 <a class="nav-link" routerLink="play"><i class="fas fa-gamepad"></i>Play</a>
             </li>
             <li class="nav-item" *ngIf="isLoggedIn()">
-                <a class="nav-link" routerLink="user-profile"><i class="fas fa-user"></i>Profile</a>
+                <a class="nav-link" [routerLink]="['/user-profile',user._id]"><i class="fas fa-user"></i>Profile</a>
             </li>
         </ul>
         <ul class="navbar-nav ml-auto">

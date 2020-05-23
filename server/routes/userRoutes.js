@@ -31,7 +31,8 @@ router.get('/:id', userController.show);
  */
 router.post('/',upload.single('picture') ,userController.create);
 router.post('/login', userController.login);
-
+router.post('/start',userController.gameStart);
+router.post('/win',userController.gameWon);
 /*
  * PUT
  */

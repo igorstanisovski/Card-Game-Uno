@@ -11,4 +11,9 @@ export class User {
     age:number;
     gender:string;
     zip:number;
+    picture_path:string;
+    gameSettings: {
+        gamesPlayed:number;
+        wins:number;
+    }
 }

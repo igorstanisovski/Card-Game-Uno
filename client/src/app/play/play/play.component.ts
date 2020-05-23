@@ -7,6 +7,7 @@ import { SocketService } from 'src/app/socket.service';
 import { MatDialog } from '@angular/material/dialog';
 import { PickColorCardComponent } from '../../popups/pick-color-card/pick-color-card.component';
 import { YourTurnPopupComponent } from 'src/app/popups/your-turn-popup/your-turn-popup.component';
+import { GameStartedComponent } from 'src/app/popups/game-started/game-started.component';
 
 @Component({
   selector: 'app-play',
@@ -30,7 +31,8 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
   turn:boolean = false;
   direction:number = 1;
   public playerOnTurn:string;
-
+  alreadyPickedOneCard:boolean = false;
+  host = UserService.host;
 
   constructor(private userService:UserService,private route: ActivatedRoute,private router: Router, 
     private socketService: SocketService, private elementRef:ElementRef, private renderer: Renderer2,public dialog: MatDialog) { 
@@ -82,6 +84,11 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
     for(let child of myElem){
       this.renderer.removeChild(this.gameCanvas.nativeElement,child);
     }
+    const myElement = this.gameBoardColor.nativeElement;
+    this.renderer.removeClass(myElement,"bg-danger");
+    this.renderer.removeClass(myElement,"bg-primary");
+    this.renderer.removeClass(myElement,"bg-success");
+    this.renderer.removeClass(myElement,"bg-warning");
   }
 
   userConnected() {
@@ -91,11 +98,23 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
     return false;
   }
 
+  turnOver() {
+    this.turn = false;
+    this.socketService.emit('turnOver','');
+  }
+
 
   ngOnInit(): void {
     if(this.userIsConnected){
       this.socketService.listen('gameStarted').subscribe((data) => {
-        window.alert(data);
+        console.log(this.user.username + "--game");
+        this.userService.gameStart(this.user.username).subscribe((data) => {
+          console.log(data);
+        });
+        const dialogRef=this.dialog.open(GameStartedComponent);
+        setTimeout( () => {
+          dialogRef.close();
+        },500);
         this.gameStarted=true;
       });
 
@@ -121,8 +140,10 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
       this.socketService.listen('turn').subscribe((data) => {
         this.deleteAllCards=true;
         this.turn = true;
-        //window.alert(data);
-        const dialogRef=this.dialog.open(YourTurnPopupComponent);
+        this.alreadyPickedOneCard = false;
+        var dialogRef;
+        dialogRef=this.dialog.open(YourTurnPopupComponent);
+        
         setTimeout( () => {
           dialogRef.close();
         },1000);
@@ -201,7 +222,8 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     if(this.cards.length == 0 && this.gameStarted){
       this.socketService.emit('win',this.user.username);
-      window.alert("YOU WON!!!!");
+      this.userService.gameWon(this.user.username).subscribe();
+      this.gameStarted = false;
     }
     if(this.userIsConnected && this.turn){
       //show cards for user with available clicks
@@ -223,7 +245,12 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
             this.socketService.emit('colorOnBoard',this.colorOnBoard);
             this.cardOnBoard = {value: cardvalue, color:this.colorOnBoard };
             if(cardcolor === "All"){
-                const dialogRef=this.dialog.open(PickColorCardComponent);  
+                const dialogRef=this.dialog.open(PickColorCardComponent, { 
+                  disableClose: true,
+                  data: {
+                    cards: this.cards
+                  } 
+                });  
                 dialogRef.afterClosed().subscribe(confirmresult=>{
                   this.colorOnBoard = confirmresult;  
                   this.socketService.emit('colorOnBoard',this.colorOnBoard);
@@ -279,14 +306,15 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
       const deckDiv = this.renderer.createElement('div');
       const deckImg = document.createElement('img');
       deckImg.src = '../../../assets/uno_deck_back.png';
-      deckImg.height = 120;
-      deckImg.width = 80;
+      deckImg.height = 115;
+      deckImg.width = 78;
       this.renderer.appendChild(deckDiv,deckImg);
-      this.renderer.listen(deckDiv, 'click', () => {
-        this.socketService.emit('deck','');
-        this.turn = false;
-        this.socketService.emit('turnOver','');
-      })
+      if(!this.alreadyPickedOneCard){
+        this.alreadyPickedOneCard = true;
+        this.renderer.listen(deckDiv, 'click', () => {
+            this.socketService.emit('deck','');
+        })
+      }
       this.renderer.appendChild(this.deck.nativeElement,deckDiv); 
       //show on board card - last played card
       const boardCardDiv = this.renderer.createElement('div');
@@ -294,8 +322,8 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
       var color = this.cardOnBoard.color;
       var value = this.cardOnBoard.value;
       img.src = `../../../assets/cards/${color}/${color}_${value}.png`;
-      img.height = 120;
-      img.width = 80;
+      img.height = 115;
+      img.width = 78;
       this.renderer.appendChild(boardCardDiv,img);
       this.renderer.appendChild(this.gameCanvas.nativeElement, boardCardDiv);
     }
@@ -304,8 +332,8 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
       const deckDiv = this.renderer.createElement('div');
       const deckImg = document.createElement('img');
       deckImg.src = '../../../assets/uno_deck_back.png';
-      deckImg.height = 120;
-      deckImg.width = 80;
+      deckImg.height = 115;
+      deckImg.width = 78;
       this.renderer.appendChild(deckDiv,deckImg);
       this.renderer.appendChild(this.deck.nativeElement,deckDiv);
       //show on board card - last played card
@@ -314,8 +342,8 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
       var color = this.cardOnBoard.color;
       var value = this.cardOnBoard.value;
       img.src = `../../../assets/cards/${color}/${color}_${value}.png`;
-      img.height = 120;
-      img.width = 80;
+      img.height = 115;
+      img.width = 78;
       this.renderer.appendChild(div,img);
       this.renderer.appendChild(this.gameCanvas.nativeElement, div);
       //show cards with disabled click

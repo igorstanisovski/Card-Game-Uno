@@ -10,7 +10,10 @@ import { UserService } from '../../user.service';
 })
 export class UserRegisterComponent implements OnInit {
   fileToUpload: File = null;
-  user:User = {_id:'',name:'', lastname:'',username:'',password:'',email:'',country:'',city:'',address:'',age:null,gender:'',zip:null}
+  user:User = {_id:'',name:'', lastname:'',username:'',password:'',email:'',country:'',city:'',address:'',age:null,gender:'',zip:null, picture_path:'', gameSettings: {
+    gamesPlayed:null,
+    wins:null
+  }}
   constructor(private userService:UserService,private route: ActivatedRoute,private router: Router) { }
   
   register(): void {

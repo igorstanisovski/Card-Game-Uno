@@ -4,10 +4,11 @@ import { CommonModule } from '@angular/common';
 import { PopupsRoutingModule } from './popups-routing.module';
 import { PickColorCardComponent } from './pick-color-card/pick-color-card.component';
 import { YourTurnPopupComponent } from './your-turn-popup/your-turn-popup.component';
+import { GameStartedComponent } from './game-started/game-started.component';
 
 
 @NgModule({
-  declarations: [PickColorCardComponent, YourTurnPopupComponent],
+  declarations: [PickColorCardComponent, YourTurnPopupComponent, GameStartedComponent],
   imports: [
     CommonModule,
     PopupsRoutingModule

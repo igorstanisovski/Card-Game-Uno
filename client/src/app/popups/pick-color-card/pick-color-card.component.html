@@ -1,7 +1,21 @@
 <h1 mat-dialog-title>Choose color</h1>    
-<mat-dialog-actions>  
-    <button class="btn btn-primary" mat-raised-button mat-dialog-close mat-dialog-close="Green">Green</button>  
-    <button class="btn btn-primary" mat-raised-button mat-dialog-close mat-dialog-close="Yellow">Yellow</button>  
-    <button class="btn btn-primary" mat-raised-button mat-dialog-close mat-dialog-close="Blue">Blue</button>  
-    <button class="btn btn-primary" mat-raised-button mat-dialog-close mat-dialog-close="Red">Red</button>  
+<mat-dialog-actions>
+    <div class="row">
+        <div class="mx-auto p-1 text-center">
+            <label for="Green Cards">{{getGreenCards()}}</label>
+            <button name="Green Cards" class="btn btn-success btn-block text-dark" mat-raised-button mat-dialog-close mat-dialog-close="Green">Green</button>  
+        </div>
+        <div class="mx-auto p-1 text-center">
+            <label for="Yellow Cards">{{getYellowCards()}}</label>
+            <button name="Yellow Cards" class="btn btn-warning btn-block text-dark" mat-raised-button mat-dialog-close mat-dialog-close="Yellow">Yellow</button>  
+        </div> 
+        <div class="mx-auto p-1 text-center">
+                <label for="Blue Cards">{{getBlueCards()}}</label>
+                <button for="Blue Cards" class="btn btn-primary btn-block text-dark" mat-raised-button mat-dialog-close mat-dialog-close="Blue">Blue</button>  
+        </div>
+        <div class="mx-auto p-1 text-center">
+                <label for="Red Cards">{{getRedCards()}}</label>
+                <button name="Red Cards" class="btn btn-danger btn-block text-dark" mat-raised-button mat-dialog-close mat-dialog-close="Red">Red</button>  
+        </div>  
+    </div>
 </mat-dialog-actions>

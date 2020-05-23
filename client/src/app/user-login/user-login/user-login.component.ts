@@ -10,7 +10,11 @@ import { UserService } from '../../user.service';
 })
 export class UserLoginComponent implements OnInit {
 
-  user:User = {_id:'',name:'', lastname:'',username:'',password:'',email:'',country:'',city:'',address:'',age:0,gender:'',zip:0}
+  user:User = {_id:'',name:'', lastname:'',username:'',password:'',email:'',country:'',city:'',address:'',age:0,gender:'',zip:0 , picture_path:'',gameSettings: {
+    gamesPlayed:null,
+    wins:null
+  }}
+  public host = UserService.host;
   constructor(private userService:UserService,private route: ActivatedRoute,private router: Router) { }
 
   login(): void {

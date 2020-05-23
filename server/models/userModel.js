@@ -15,6 +15,10 @@ var userSchema = new Schema({
 	'gender' : String,
 	'zip': Number,
 	'picture_path': String,
+	'gameSettings': {
+		'gamesPlayed':Number,
+		'wins':Number,
+	}
 });
 
 userSchema.pre('save', function (next) {

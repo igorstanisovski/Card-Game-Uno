@@ -1,6 +1,7 @@
 #field {
-    width: 160px;
-    height: 120px;
+    position: relative;
+    width: 400px;
+    height: 400px;
     /* background-color: #00b3b3; */
 }
 
@@ -10,3 +11,25 @@
     margin-right: auto;
     text-align: center;
   }
+#gameCanvas {
+   position: absolute;
+   top: 144px;
+   /* left:120px; */
+   padding-right: 144px;
+   /* left: 50px;   */
+}
+#deck {
+    position: absolute;
+    top: 144px;
+    padding-left: 145px;
+    /* left: 100px;   */
+ }
+
+ #playerOnTurn {
+    position: absolute;
+    top: 350px;
+    padding-left: 120px;
+    /* left: 100px;   */
+ }
+
+ 

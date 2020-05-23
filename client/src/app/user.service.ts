@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { User } from './classes/user';
-import { HttpClient,HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient,HttpHeaders, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Observable, throwError, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
@@ -36,6 +36,22 @@ export class UserService {
       })
     );
   }
+  
+  gameStart(username:string): Observable<User>{
+    const headers = new HttpHeaders();
+    let body = new HttpParams();
+    body = body.set('username', username);
+    //form.append('username',JSON.stringify(username));
+    return this.http.post<User>(UserService.host + 'users/start',body,{headers,withCredentials:true});
+  }
+  
+  gameWon(username:string):Observable<User> {
+    const headers = new HttpHeaders();
+    let body = new HttpParams();
+    body = body.set('username', username);
+    //form.append('username',JSON.stringify(username));
+    return this.http.post<User>(UserService.host + 'users/win',body,{headers,withCredentials:true});
+  }
 
   handleError(error) {
     let errorMessage = '';
@@ -48,6 +64,10 @@ export class UserService {
     }
     window.alert(errorMessage);
     return throwError(errorMessage);
+  }
+
+  public getUser (_id:string): Observable<User> {
+    return this.http.get<User>(UserService.host+'users/'+_id);
   }
 
 }

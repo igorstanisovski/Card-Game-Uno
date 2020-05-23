@@ -43,9 +43,9 @@ io.on('connection', function(socket){
             io.emit('gameStarted','GAME STARTED!!!');
             for(var i = 0; i < io.engine.clientsCount;i++){
                 var playerCards = [];
-                for(var j = 0;j < 8;j++){
+                for(var j = 0;j < 1;j++){
                     // da se vrati vo deck[j]
-                    playerCards[j] = deck[j];
+                    playerCards[j] = {value:"8", color:"Red"};
                 }
                 deck.splice(0,8);
                 const dataToBeSent = {
@@ -55,7 +55,7 @@ io.on('connection', function(socket){
                 io.to(clients[i].socket).emit('cards',dataToBeSent);
             }
             //custom delete after
-            //deck[0] = {value:"+4", color:"All"};
+            deck[0] = {value:"9", color:"Red"};
             if(deck[0].color === "All"){
                 io.emit('colorOnBoard',"Red");
             }

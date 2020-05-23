@@ -1,1 +1,49 @@
-<p>user-profile works!</p>
+<div class="container">
+    <h2 class="text-center">User profile</h2>
+    <h4>Personal info</h4>
+    <hr class="colorgraph">
+    <div class="row">
+        <div class="col-md-3">
+            <img title="profile image" class="rounded-circle" width="150px" height="150px" src="{{host+user.picture_path}}">
+        </div>
+        <div class="col-md-4">
+                <p><b>Name:</b> {{user.name}}</p>
+                <p><b>Lastname:</b> {{user.lastname}}</p>
+                <p><b>Username:</b> {{user.username}}</p>
+                <div class="row">
+                    <div class="col-md-3">
+                        <b>Age:</b> {{user.age}}
+                    </div>
+                    <div class="col">
+                        <b>Gender:</b> {{user.gender}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <p><b>Country:</b> {{user.country}}</p>
+                <p><b>City:</b> {{user.city}}</p>
+                <p><b>Address:</b> {{user.address}}</p>
+                <p><b>Zip Code:</b> {{user.zip}}</p>
+            </div>
+        </div>
+        <hr class="colorgraph">
+        <h4>Game info</h4>
+        <hr class="colorgraph">
+        <div class="row">
+            <div class="col-md-2">
+                <img title="profile image" class="rounded img-fluid" width="200px" src="{{../../../../../assets/uno_background.jpg">
+            </div>
+            <div class="col-md-2">
+                <p><b>Games played:</b> {{user.gameSettings.gamesPlayed}}</p>
+                <p><b>Wins:</b> {{user.gameSettings.wins}}</p>
+            </div>
+        </div>
+        <hr class="colorgraph">
+        <h4>Contact info</h4>
+        <hr class="colorgraph">
+        <div class="row">
+            <div class="col">
+                <p><b>Email:</b> {{user.email}}</p>
+            </div>
+        </div>
+</div>

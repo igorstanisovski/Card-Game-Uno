@@ -72,7 +72,11 @@ module.exports = {
 			age : userData.age,
             gender : userData.gender,
             zip : userData.zip,
-            picture_path: 'images/'+req.file.filename
+            picture_path: 'images/'+req.file.filename,
+            gameSettings: {
+                gamesPlayed:0,
+                wins:0
+            }
         });
 
         user.save(function (err, user) {
@@ -127,6 +131,41 @@ module.exports = {
 
                 return res.json(user);
             });
+        });
+    },
+
+    gameStart: function (req,res) {
+        var username = req.body.username;
+        userModel.findOneAndUpdate({username: username},{$inc: {'gameSettings.gamesPlayed' : 1}}, {new: true, useFindAndModify: false}, function (err, user) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting user',
+                    error: err
+                });
+            }
+            if (!user) {
+                return res.status(404).json({
+                    message: 'No such user'
+                });
+            }
+            //user.gameSettings.gamesPlayed = user.gameSettings.gamesPlayed + 1;
+        });
+    },
+    gameWon: function (req,res) {
+        var username = req.body.username;
+        userModel.findOneAndUpdate({username: username},{$inc: {'gameSettings.wins' : 1}}, {new: true, useFindAndModify: false}, function (err, user) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting user',
+                    error: err
+                });
+            }
+            if (!user) {
+                return res.status(404).json({
+                    message: 'No such user'
+                });
+            }
+            //user.gameSettings.gamesPlayed = user.gameSettings.gamesPlayed + 1;
         });
     },
 
