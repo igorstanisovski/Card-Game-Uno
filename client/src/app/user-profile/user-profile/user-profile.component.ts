@@ -15,11 +15,21 @@ export class UserProfileComponent implements OnInit {
     gamesPlayed:null,
     wins:0
   }}
-  host = UserService.host;
-  constructor(private userService: UserService, private route: ActivatedRoute, private router: Router) { }
+    host = UserService.host;
+
+  constructor(private userService: UserService, private route: ActivatedRoute, private router: Router) {
+  }
 
   getUser(_id:string): void {
     this.userService.getUser(_id).subscribe(user => this.user = user);
+  }
+
+  getLocalUser() {
+    var user = JSON.parse(localStorage.getItem('currentUser'));
+    if(this.user._id === user._id){
+      return true;
+    }
+    return false;
   }
 
   ngOnInit(): void {

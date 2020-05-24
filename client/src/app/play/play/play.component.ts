@@ -6,8 +6,9 @@ import { Observable} from 'rxjs';
 import { SocketService } from 'src/app/socket.service';
 import { MatDialog } from '@angular/material/dialog';
 import { PickColorCardComponent } from '../../popups/pick-color-card/pick-color-card.component';
-import { YourTurnPopupComponent } from 'src/app/popups/your-turn-popup/your-turn-popup.component';
-import { GameStartedComponent } from 'src/app/popups/game-started/game-started.component';
+import { CustomPopupComponent } from 'src/app/popups/custom-popup/custom-popup.component';
+// import { YourTurnPopupComponent } from 'src/app/popups/your-turn-popup/your-turn-popup.component';
+// import { GameStartedComponent } from 'src/app/popups/game-started/game-started.component';
 
 @Component({
   selector: 'app-play',
@@ -111,7 +112,7 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
         this.userService.gameStart(this.user.username).subscribe((data) => {
           console.log(data);
         });
-        const dialogRef=this.dialog.open(GameStartedComponent);
+        const dialogRef=this.dialog.open(CustomPopupComponent, { data: { message: data}});
         setTimeout( () => {
           dialogRef.close();
         },500);
@@ -142,8 +143,7 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
         this.turn = true;
         this.alreadyPickedOneCard = false;
         var dialogRef;
-        dialogRef=this.dialog.open(YourTurnPopupComponent);
-        
+        dialogRef=this.dialog.open(CustomPopupComponent, {data: { message: `It's your turn! Play a card, pick or turn over!`}});
         setTimeout( () => {
           dialogRef.close();
         },1000);
@@ -153,39 +153,31 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
       this.socketService.listen('colorOnBoard').subscribe((data:string) => {
         this.colorOnBoard = data;
         const myEl = this.gameBoardColor.nativeElement;
-        // this.renderer.removeClass(myEl,"bg-danger");
-        // this.renderer.removeClass(myEl,"bg-primary");
-        // this.renderer.removeClass(myEl,"bg-success");
-        // this.renderer.removeClass(myEl,"bg-warning");
         this.renderer.removeClass(myEl,"red");
         this.renderer.removeClass(myEl,"green");
         this.renderer.removeClass(myEl,"blue");
         this.renderer.removeClass(myEl,"yellow");
         if(this.colorOnBoard === "Red"){
           console.log(this.colorOnBoard);
-          // this.renderer.addClass(myEl,"bg-danger");
           this.renderer.addClass(myEl,"red");
         }
         else if(this.colorOnBoard === "Blue"){
           console.log(this.colorOnBoard);
-          // this.renderer.addClass(myEl,"bg-primary");
           this.renderer.addClass(myEl,"blue");
         }
         else if(this.colorOnBoard === "Green"){
           console.log(this.colorOnBoard);
-          // this.renderer.addClass(myEl,"bg-success");
           this.renderer.addClass(myEl,"green");
         }
         else if(this.colorOnBoard === "Yellow"){
           console.log(this.colorOnBoard);
-          // this.renderer.addClass(myEl,"bg-warning");
           this.renderer.addClass(myEl,"yellow");
         } 
-        //this.ngAfterViewInit();
       })
 
       this.socketService.listen('plusCards').subscribe((data:any) => {
         this.cards.push(data);
+        this.alreadyPickedOneCard = false;
         this.deleteAllCards = true;
         this.ngAfterViewInit();
       })
@@ -196,12 +188,12 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
 
       this.socketService.listen('win').subscribe((data:string) => {
         window.alert(data + " WON");
+        this.disconnect();
       })
 
       this.socketService.listen('showTurn').subscribe((data:string) => {
         this.playerOnTurn = data;
       })
-
     }
   }
 

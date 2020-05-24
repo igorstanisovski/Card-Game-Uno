@@ -22,7 +22,7 @@
             <div class="row mx-auto w-75 p-2" id="cards" name="cards" #cards>      
             </div>
             <div class="p-4">
-                <button *ngIf="checkIfGameStarted()" class="btn btn-sm btn-danger" (click)="turnOver()">Turn over</button>
+                <button *ngIf="checkIfGameStarted() && this.turn" class="btn btn-sm btn-danger" (click)="turnOver()">Turn over</button>
             </div>
         </div>
     </div>

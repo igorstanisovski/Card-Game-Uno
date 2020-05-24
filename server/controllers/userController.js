@@ -168,6 +168,85 @@ module.exports = {
             //user.gameSettings.gamesPlayed = user.gameSettings.gamesPlayed + 1;
         });
     },
+    editProfile: function(req,res) {
+        var user = JSON.parse(req.body.user);
+        userModel.findOne({_id: user._id}, function (err, foundUser) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting user',
+                    error: err
+                });
+            }
+            if (!foundUser) {
+                return res.status(404).json({
+                    message: 'No such user'
+                });
+            }
+            else {
+                if(foundUser.username === user.username){
+                    userModel.replaceOne({username: user.username} , user , function(err,found) {
+                        if (err) {
+                            return res.status(500).json({
+                                message: 'Error when getting user',
+                                error: err
+                            });
+                        }
+                        if (!found) {
+                            return res.status(404).json({
+                                message: 'No such user'
+                            });
+                        }
+                        return res.json(user);
+                    })
+                }
+                else {
+                    userModel.findOne({username: user.username}, function(err, foundUserByUsername) {
+                        if (err) {
+                            return res.status(500).json({
+                                message: 'Error when getting user',
+                                error: err
+                            });
+                        }
+                        if(foundUserByUsername){
+                            return res.status(304).json({
+                                message: 'Choose another username ',
+                                error: err
+                            });
+                        }
+                        userModel.replaceOne({_id: user._id} , user , function(err,found) {
+                            if (err) {
+                                return res.status(500).json({
+                                    message: 'Error when getting user',
+                                    error: err
+                                });
+                            }
+                            if (!found) {
+                                return res.status(404).json({
+                                    message: 'No such user'
+                                });
+                            }
+                            return res.json(user);
+                        })
+                    })
+                }
+            }
+        });
+    },
+
+    changePassword: function(req,res) {
+        var password = req.body.checkPassword;
+        var newPassword = req.body.newPassword;
+        var user = JSON.parse(req.body.user);
+        userModel.changePassword(user.username, password, newPassword, function (error, user) {
+            if (error || !user) {
+                var err = new Error('Wrong password.');
+                err.status = 401;
+                return next(err);
+            } else {
+                return res.status(201).json(user);
+            }
+        })
+    },
 
     /**
      * userController.remove()

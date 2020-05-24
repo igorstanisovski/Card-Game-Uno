@@ -33,6 +33,8 @@ router.post('/',upload.single('picture') ,userController.create);
 router.post('/login', userController.login);
 router.post('/start',userController.gameStart);
 router.post('/win',userController.gameWon);
+router.post('/editprofile', userController.editProfile);
+router.post('/changepassword',userController.changePassword);
 /*
  * PUT
  */

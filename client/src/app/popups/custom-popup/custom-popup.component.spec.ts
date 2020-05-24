@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { YourTurnPopupComponent } from './your-turn-popup.component';
+import { CustomPopupComponent } from './custom-popup.component';
 
-describe('YourTurnPopupComponent', () => {
-  let component: YourTurnPopupComponent;
-  let fixture: ComponentFixture<YourTurnPopupComponent>;
+describe('CustomPopupComponent', () => {
+  let component: CustomPopupComponent;
+  let fixture: ComponentFixture<CustomPopupComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ YourTurnPopupComponent ]
+      declarations: [ CustomPopupComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(YourTurnPopupComponent);
+    fixture = TestBed.createComponent(CustomPopupComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

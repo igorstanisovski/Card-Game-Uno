@@ -53,6 +53,30 @@ export class UserService {
     return this.http.post<User>(UserService.host + 'users/win',body,{headers,withCredentials:true});
   }
 
+  editProfile(user:User): Observable<User>{
+    const headers = new HttpHeaders();
+    let body = new HttpParams();
+    body = body.set('user', JSON.stringify(user));
+    return this.http.post<User>(UserService.host + 'users/editprofile',body,{headers,withCredentials:true}).pipe(
+      map(user => {
+        if(user){
+          localStorage.setItem('currentUser',JSON.stringify(user));
+        }
+        return user;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  changePassowrd(checkPassword:string, newPassword:string, user:User): Observable<User>{
+    const headers = new HttpHeaders();
+    let body = new HttpParams();
+    body = body.set('user',JSON.stringify(user));
+    body = body.set('checkPassword',checkPassword);
+    body = body.set('newPassword',newPassword);
+    return this.http.post<User>(UserService.host + 'users/changepassword',body, {headers,withCredentials:true});
+  }
+
   handleError(error) {
     let errorMessage = '';
     if (error.error instanceof ErrorEvent) {
