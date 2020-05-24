@@ -19,7 +19,7 @@ export class UserRegisterComponent implements OnInit {
   register(): void {
     this.userService.register(this.fileToUpload,this.user).subscribe(user => {
       this.route.queryParams.subscribe( params => {
-        this.router.navigateByUrl('');
+        this.router.navigateByUrl('user-login');
       });
     });
   }
