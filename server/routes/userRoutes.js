@@ -35,6 +35,7 @@ router.post('/start',userController.gameStart);
 router.post('/win',userController.gameWon);
 router.post('/editprofile', userController.editProfile);
 router.post('/changepassword',userController.changePassword);
+router.post('/changeprofilepicture/:id',upload.single('picture'), userController.changeProfilePicture);
 /*
  * PUT
  */

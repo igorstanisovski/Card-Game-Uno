@@ -77,6 +77,20 @@ export class UserService {
     return this.http.post<User>(UserService.host + 'users/changepassword',body, {headers,withCredentials:true});
   }
 
+  changeProfilePicture(picture:File,user_id:string): Observable<User> {
+    const headers = new HttpHeaders();
+    const form = new FormData();
+    form.append('picture',picture,picture.name);
+    return this.http.post<User>(UserService.host + 'users/changeprofilepicture/'+user_id, form, {headers, withCredentials:true}).pipe(
+      map(user => {
+          if(user){
+            localStorage.setItem('currentUser',JSON.stringify(user));
+          }
+          return user;
+      })
+    )
+  }
+
   handleError(error) {
     let errorMessage = '';
     if (error.error instanceof ErrorEvent) {

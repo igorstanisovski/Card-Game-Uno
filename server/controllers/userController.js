@@ -247,6 +247,24 @@ module.exports = {
             }
         })
     },
+    changeProfilePicture: function(req,res) {
+        var user_id = req.params.id;
+        var picture = 'images/'+req.file.filename;
+        userModel.findOneAndUpdate({_id: user_id},{$set: {'picture_path' : picture}}, {new: true, useFindAndModify: false}, function (err, user) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting user',
+                    error: err
+                });
+            }
+            if (!user) {
+                return res.status(404).json({
+                    message: 'No such user'
+                });
+            }
+            return res.json(user);
+        });
+    },
 
     /**
      * userController.remove()
