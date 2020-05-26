@@ -1,87 +1,86 @@
 #field {
-    position: relative;
-    width: 400px;
-    height: 400px;
-    /* background-color: #00b3b3; */
+   position: relative;
+   width: 400px;
+   /* //height: 300px; */
+   /* background-color: #00b3b3; */
 }
 
 .col-centered{
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-  }
+   display: block;
+   margin-left: auto;
+   margin-right: auto;
+   text-align: center;
+ }
 #gameCanvas {
-   position: absolute;
-   top: 144px;
-   /* left:120px; */
-   padding-right: 144px;
-   /* left: 50px;   */
+  position: absolute;
+  top: 144px;
+  /* left:120px; */
+  padding-right: 144px;
+  /* left: 50px;   */
 }
 #deck {
-    position: absolute;
-    top: 144px;
-    padding-left: 145px;
-    /* left: 100px;   */
- }
-
- #playerOnTurn {
-    position: absolute;
-    top: 350px;
-    padding-left: 120px;
-    /* left: 100px;   */
- }
-
- #chevron {
    position: absolute;
-   text-align: center;
-   left:100px;
-   top: 40px;
-   margin-bottom: 6px;
-   height: 60px;
-   width: 200px;
- }
- #chevron:before {
-   content: '';
-   position: absolute;
-   top: 0;
-   left: 0;
-   height: 100%;
-   width: 51%;
-   transform: skew(0deg, 6deg);
- }
- #chevron:after {
-   content: '';
-   position: absolute;
-   top: 0;
-   right: 0;
-   height: 100%;
-   width: 50%;
-   transform: skew(0deg, -6deg);
- }
+   top: 144px;
+   padding-left: 145px;
+   /* left: 100px;   */
+}
 
- #chevron.red::before {
-   background: red;
+#playerOnTurn {
+   position: absolute;
+   top: 350px;
+   padding-left: 120px;
+   /* left: 100px;   */
+}
+
+#chevron {
+  position: absolute;
+  text-align: center;
+  left:100px;
+  top: 40px;
+  margin-bottom: 6px;
+  height: 60px;
+  width: 200px;
+}
+#chevron:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 51%;
+  transform: skew(0deg, 6deg);
+}
+#chevron:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 50%;
+  transform: skew(0deg, -6deg);
+}
+
+#chevron.red::before {
+  background: red;
 }
 #chevron.blue::before {
-   background: blue;
+  background: blue;
 }
 #chevron.green::before {
-   background: green;
+  background: green;
 }
 #chevron.yellow::before {
-   background: yellow;
+  background: yellow;
 }
 #chevron.red::after {
-   background: red;
+  background: red;
 }
 #chevron.blue::after {
-   background: blue;
+  background: blue;
 }
 #chevron.green::after {
-   background: green;
+  background: green;
 }
 #chevron.yellow::after {
-   background: yellow;
+  background: yellow;
 }
-

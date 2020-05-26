@@ -9,7 +9,6 @@
                 <button class="btn btn-danger btn-sm" (click)="disconnect()" *ngIf="userConnected()">Disconnect</button>
                 <button class="btn btn-success btn-sm" (click)="startGame()" *ngIf="userConnected() && getUsername() && !checkIfGameStarted()">Start Game</button>
             </div>
-            <!-- #gameBoardColor -->
             <div class="row mx-auto text-center" id="field" *ngIf="checkIfGameStarted()" >    
                 <img src="../../../assets/uno_table.png" width="400px" height="400px" >
                 <div id="chevron" #gameBoardColor></div>
@@ -19,12 +18,11 @@
                     <label for="playerOnTurn" class="text-white">Player on turn: {{ getPlayerOnTurn() }}</label>
                 </div>
             </div>
-            <div class="row mx-auto w-75 p-2" id="cards" name="cards" #cards>      
+            <div class="row mx-auto" id="cards" name="cards" #cards>      
             </div>
             <div class="p-4">
                 <button *ngIf="checkIfGameStarted() && this.turn" class="btn btn-sm btn-danger" (click)="turnOver()">Turn over</button>
             </div>
         </div>
     </div>
-    
 </div>

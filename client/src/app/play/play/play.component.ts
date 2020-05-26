@@ -296,8 +296,7 @@ export class PlayComponent implements OnInit, OnDestroy, AfterViewInit {
             }
           }
           else {
-            console.log(this.colorOnBoard);
-            window.alert("You can't play this card! Choose color " + this.colorOnBoard + "or value: " + this.cardOnBoard.value)
+            window.alert("You can't play this card! Choose color " + this.colorOnBoard + " or value: " + this.cardOnBoard.value)
           }
         })  
         this.renderer.appendChild(this.d1.nativeElement, div);
