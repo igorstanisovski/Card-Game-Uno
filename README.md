@@ -30,3 +30,8 @@ Navigate to MongoDB installation folder and start mongod.exe
       - ``` ip addr show ``` (Linux)
    - Client -> ``` ng serve --host YOUR_IP_ADDRESS ```
    - Server -> ``` npm start ```
+
+## Playing the game
+   - Register
+   - Login
+   - Connect and start playing!
